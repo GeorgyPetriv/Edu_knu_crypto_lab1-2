@@ -9,6 +9,7 @@
 #define lab1_hpp
 
 #include <stdio.h>
+
 #include "utils.hpp"
 
 //tests

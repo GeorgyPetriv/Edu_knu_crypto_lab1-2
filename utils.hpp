@@ -36,4 +36,9 @@ string int128_to_base10(int128 num);
 string int128_to_base64(int128 num);
 string int128_to_byteset(int128 num);
 
+//lab2 part
+int128 egcd(int128 num1, int128 num2);
+int128 CRT(int128 c, int128 d, int128 p, int128 q);
+string message_to_str(int128 * m, int size);
+int128 * str_to_message(string m);
 #endif /* utils_hpp */

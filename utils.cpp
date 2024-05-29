@@ -7,7 +7,7 @@
 #include "utils.hpp"
 
 int128 fast_pow(int128 base, int128 exp, int128 mod){
-    int128 res = 1, temp;
+    int128 res = 1;
     base %= mod;
     
     
@@ -178,6 +178,7 @@ string int128_to_base10(int128 num){
     return res;
     
 }
+
 string int128_to_base64(int128 num){
     string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
     string res;
@@ -191,6 +192,7 @@ string int128_to_base64(int128 num){
     reverse(res.begin(), res.end());
     return res;
 }
+
 string int128_to_byteset(int128 num){
     string res;
     int bytes[sizeof(int128)];
@@ -205,4 +207,67 @@ string int128_to_byteset(int128 num){
     }
     res += to_string(bytes[0]);
     return res;
+}
+//utils for lab2
+
+//only returns one of the coefictients since we need it to form private key
+int128 egcd(int128 num1, int128 num2){
+    int128 x0, x1, y0, y1;
+    x0 = 1; x1 = 0; y0 = 1; y1 = 1;
+    int128 i = num2;
+    while(i != 0){
+        int128 q = num1 / i;
+        int128 temp = i;
+        i = num1 % i;
+        
+        num1 = temp;
+        temp = x1;
+        x1 = x0 - x1 * q;
+        
+        x0 = temp;
+        temp = y1;
+        y1 = y0 - q * y1;
+        
+        y0 = temp;
+    }
+    return x0 > 0 ? x0 : -x0;
+}
+
+int128 CRT(int128 c, int128 d, int128 p, int128 q){
+    int128 c_p, c_q, d_p, d_q, m_p, m_q;
+    c_p = c % p;
+    c_q = c % q;
+    d_p = d % (p-1);
+    d_q = d % (q-1);
+    
+    m_p = fast_pow(c_p, d_p, p);
+    m_q = fast_pow(c_q, d_q, q);
+    
+    //solving the congruence
+    while(m_p != m_q){
+        if(m_p < m_q){
+            m_p += p;
+        }
+        else{
+            m_q += q;
+        }
+    }
+    return m_p;
+}
+
+string message_to_str(int128 * m, int size){
+    string res;
+    for(int i=0; i<size; ++i){
+        res= (char(int(m[i])));
+    }
+    return res;
+}
+
+int128 * str_to_message(string m){
+    int128 * p = new int128[m.size()];
+    int i = 0;
+    for(char c: m){
+        p[i++] = int128(c);
+    }
+    return p;
 }
